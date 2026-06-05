@@ -1,0 +1,16 @@
+From: reservations@example.com
+To: guest@example.test
+Subject: Booking ABC123 confirmed
+Content-Type: multipart/alternative; boundary="alt"
+
+--alt
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Your booking ABC123 is confirmed for June 18. Check-in begins at 3 PM.
+
+--alt
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>Your booking <strong>ABC123</strong> is confirmed for June 18.</p></body></html>
+--alt--

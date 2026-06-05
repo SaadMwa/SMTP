@@ -1,0 +1,5 @@
+{
+  "host": "mailhog",
+  "port": 1025,
+  "enable_tls": false
+}

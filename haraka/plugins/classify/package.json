@@ -1,0 +1,11 @@
+{
+  "name": "haraka-plugin-classify",
+  "version": "1.0.0",
+  "description": "Production-grade Haraka data_post classifier using Ollama.",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "mailparser": "3.7.1",
+    "prom-client": "15.1.3"
+  }
+}

@@ -1,0 +1,37 @@
+﻿# Environment files
+.env
+.env.local
+.env.*.local
+
+# Docker
+*.log
+*.pid
+*.seed
+
+# Node modules
+node_modules/
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Haraka queue files
+haraka/queue/
+haraka/*.log
+
+# SSL certificates
+*.pem
+*.crt
+*.key
+
+# Test artifacts
+test/emails/
+coverage/

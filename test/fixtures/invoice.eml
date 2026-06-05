@@ -1,0 +1,7 @@
+From: billing@example.com
+To: ap@example.test
+Subject: Invoice 7781
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+
+SW52b2ljZSAjNzc4MSBpcyBhdHRhY2hlZC4gUGF5bWVudCBpcyBkdWUgaW4gMTUgZGF5cy4K
