@@ -10,29 +10,29 @@ services:
       - ./.env.example
     environment:
       SMTP_LISTEN_PORT: ${SMTP_LISTEN_PORT:-2525}
-      METRICS_PORT: ${METRICS_PORT:-9090}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
-      OLLAMA_PRIMARY_MODEL: ${OLLAMA_PRIMARY_MODEL:-tinyllama}
-      OLLAMA_FALLBACK_MODEL: ${OLLAMA_FALLBACK_MODEL:-phi}
       UPSTREAM_SMTP_HOST: ${UPSTREAM_SMTP_HOST:-mailhog}
       UPSTREAM_SMTP_PORT: ${UPSTREAM_SMTP_PORT:-1025}
-      CLASSIFIER_TIMEOUT_MS: ${CLASSIFIER_TIMEOUT_MS:-3000}
-      CLASSIFIER_RETRIES: ${CLASSIFIER_RETRIES:-1}
-      CIRCUIT_FAILURE_THRESHOLD: ${CIRCUIT_FAILURE_THRESHOLD:-3}
-      CIRCUIT_WINDOW_MS: ${CIRCUIT_WINDOW_MS:-30000}
-      CIRCUIT_COOLDOWN_MS: ${CIRCUIT_COOLDOWN_MS:-30000}
-      CLASSIFIER_CACHE_TTL_MS: ${CLASSIFIER_CACHE_TTL_MS:-3600000}
-      RATE_LIMIT_EMAILS_PER_SECOND: ${RATE_LIMIT_EMAILS_PER_SECOND:-10}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
       - "0.0.0.0:${SMTP_HOST_PORT:-2525}:${SMTP_LISTEN_PORT:-2525}"
-      - "0.0.0.0:${METRICS_HOST_PORT:-9090}:${METRICS_PORT:-9090}"
     volumes:
       - ./haraka/config:/app/config
       - ./haraka/entrypoint.sh:/app/entrypoint.sh:ro
     restart: unless-stopped
 
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    platform: linux/amd64
+    container_name: smtp-mailhog
+    ports:
+      - "0.0.0.0:1025:1025"
+      - "0.0.0.0:8025:8025"
+    restart: unless-stopped
+
+  # Optional LLM stack — NOT started by default (see docker-compose.override.yaml).
+  # Enable with: docker compose --profile llm up --build
   ollama:
+    profiles: ["llm"]
     image: ollama/ollama:0.1.48
     container_name: smtp-ollama
     ports:
@@ -47,6 +47,7 @@ services:
     restart: unless-stopped
 
   ollama-warmup:
+    profiles: ["llm"]
     image: curlimages/curl:8.8.0
     container_name: smtp-ollama-warmup
     depends_on:
@@ -65,15 +66,8 @@ services:
         curl -fsS "$${OLLAMA_BASE_URL}/api/pull" -d "{\"name\":\"$${OLLAMA_FALLBACK_MODEL}\"}" || true
     restart: "no"
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.1
-    container_name: smtp-mailhog
-    ports:
-      - "0.0.0.0:1025:1025"
-      - "0.0.0.0:8025:8025"
-    restart: unless-stopped
-
   prometheus:
+    profiles: ["metrics"]
     image: prom/prometheus:v2.52.0
     container_name: smtp-prometheus
     command:

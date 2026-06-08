@@ -2,12 +2,18 @@
 set -eu
 
 cat > /app/config/smtp.ini <<EOF
+[main]
 listen_host=0.0.0.0
 port=${SMTP_LISTEN_PORT:-2525}
 nodes=1
 EOF
 
 cat > /app/config/connection.ini <<EOF
+[message]
+greeting=smtp-classifier.local Haraka ready
+helo=Hello
+close=Goodbye
+
 [haproxy]
 hosts[]=203.0.113.254
 

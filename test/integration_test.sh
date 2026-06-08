@@ -20,13 +20,11 @@ assert_mailhog_header() {
   local response
   response="$(curl -fsS "$MAILHOG_API")"
   echo "$response" | grep -q '"X-Classification"' || { echo "missing X-Classification header for $label" >&2; exit 1; }
-  echo "$response" | grep -q "$expected" || echo "warning: expected $expected for $label, but LLM may have degraded; headers exist"
+  echo "$response" | grep -q "$expected" || { echo "expected $expected for $label" >&2; exit 1; }
 }
 
 require swaks
 require curl
-
-curl -fsS "http://localhost:9090/healthz" >/dev/null
 
 for label in quote_request booking_confirmation invoice other; do
   send_fixture "test/fixtures/${label}.eml"
@@ -35,5 +33,4 @@ for label in quote_request booking_confirmation invoice other; do
   echo "ok: $label"
 done
 
-curl -fsS "http://localhost:9090/metrics" | grep -q "classification_duration_seconds"
 echo "integration test passed"

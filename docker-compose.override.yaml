@@ -1,24 +1,17 @@
+# Default stack: keyword classifier only — no Ollama container.
+# Ollama is disabled because the bundled image crashes on many hosts
+# (e.g. "exec /bin/ollama: input/output error" on Windows Docker Desktop).
+#
+# Optional LLM mode: docker compose --profile llm up --build
+
 services:
-  # Disable the Ollama container entirely
   ollama:
-    deploy:
-      replicas: 0
-  
-  # Disable the warmup container
+    profiles: ["llm"]
+
   ollama-warmup:
-    deploy:
-      replicas: 0
-  
-  # Configure Haraka to use your Windows Ollama
+    profiles: ["llm"]
+
   haraka:
-    environment:
-      - OLLAMA_BASE_URL=http://host.docker.internal:11434
-      - OLLAMA_PRIMARY_MODEL=phi
-      - OLLAMA_HOST=http://host.docker.internal:11434
-      - OLLAMA_MODEL=phi
-      - UPSTREAM_SMTP_HOST=mailhog
-      - UPSTREAM_SMTP_PORT=1025
-      - UPSTREAM_HOST=mailhog
-      - UPSTREAM_PORT=1025
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      mailhog:
+        condition: service_started
